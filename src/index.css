@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+/* ABC楽譜のテキストを白色に */
+.abc-preview svg text {
+  fill: #ffffff !important;
+}
