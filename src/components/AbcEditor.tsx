@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { useLineNumbers } from "../hooks/useLineNumbers";
 
 interface AbcEditorProps {
   value: string;
@@ -9,8 +10,7 @@ export const AbcEditor = ({ value, onChange }: AbcEditorProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const lineNumbersRef = useRef<HTMLDivElement>(null);
 
-  const lines = value.split('\n');
-  const lineNumbers = lines.map((_, i) => i + 1).join('\n');
+  const lineNumbers = useLineNumbers(value);
 
   const handleScroll = () => {
     if (textareaRef.current && lineNumbersRef.current) {
