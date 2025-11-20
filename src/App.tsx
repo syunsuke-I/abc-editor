@@ -11,10 +11,10 @@ C D E F | G A B c |`);
   return (
     <div className="h-screen flex bg-slate-950">
       {/* 左側: エディタ */}
-      <div className="w-1/2 border-r border-slate-700 flex flex-col">
+      <div className="w-1/2 border-r border-slate-700 flex flex-col p-4" style={{ backgroundColor: '#161616' }}>
         <textarea
-          className="w-full h-full resize-none px-4 py-4 text-sm font-mono leading-relaxed text-slate-100 outline-none"
-          style={{ backgroundColor: '#161616' }}
+          className="w-full h-full resize-none px-4 py-4 text-sm font-mono leading-relaxed text-slate-100 outline-none rounded-lg border border-slate-600 focus:border-slate-500 transition-colors"
+          style={{ backgroundColor: '#1a1a1a' }}
           value={abc}
           onChange={(e) => setAbc(e.target.value)}
           spellCheck={false}
