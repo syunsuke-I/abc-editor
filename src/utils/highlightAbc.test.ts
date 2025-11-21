@@ -6,6 +6,7 @@ import {
   parseTupletOrSlur,
   parseNoteWithDuration,
   parseChordBracket,
+  parseRest,
   highlightMusicLine,
   highlightAbc,
 } from './highlightAbc';
@@ -224,6 +225,69 @@ describe('parseChordBracket', () => {
   });
 });
 
+describe('parseRest', () => {
+  it('should parse lowercase rest z', () => {
+    const result = parseRest('z', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-rest">z</span>',
+      nextIndex: 1,
+    });
+  });
+
+  it('should parse uppercase rest Z', () => {
+    const result = parseRest('Z', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-rest">Z</span>',
+      nextIndex: 1,
+    });
+  });
+
+  it('should parse rest with long duration (2)', () => {
+    const result = parseRest('z2', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-rest">z</span><span class="abc-duration abc-duration-long">2</span>',
+      nextIndex: 2,
+    });
+  });
+
+  it('should parse rest with short duration (/2)', () => {
+    const result = parseRest('Z/2', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-rest">Z</span><span class="abc-duration abc-duration-short">/2</span>',
+      nextIndex: 3,
+    });
+  });
+
+  it('should parse rest with fraction duration (3/2)', () => {
+    const result = parseRest('z3/2', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-rest">z</span><span class="abc-duration abc-duration-fraction">3/2</span>',
+      nextIndex: 4,
+    });
+  });
+
+  it('should parse invisible rest x', () => {
+    const result = parseRest('x', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-rest-invisible">x</span>',
+      nextIndex: 1,
+    });
+  });
+
+  it('should parse invisible rest with duration', () => {
+    const result = parseRest('x2', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-rest-invisible">x</span><span class="abc-duration abc-duration-long">2</span>',
+      nextIndex: 2,
+    });
+  });
+
+  it('should return null for non-rest characters', () => {
+    expect(parseRest('C', 0)).toBeNull();
+    expect(parseRest('|', 0)).toBeNull();
+  });
+});
+
 describe('highlightMusicLine', () => {
   it('should highlight simple note sequence', () => {
     const result = highlightMusicLine('C D E F');
@@ -301,6 +365,25 @@ describe('highlightMusicLine', () => {
     const result = highlightMusicLine('[CEG]');
     expect(result).toContain('<span class="abc-chord">[</span>');
     expect(result).toContain('<span class="abc-chord">]</span>');
+  });
+
+  it('should highlight rests', () => {
+    const result = highlightMusicLine('C z D Z E');
+    expect(result).toContain('<span class="abc-rest">z</span>');
+    expect(result).toContain('<span class="abc-rest">Z</span>');
+  });
+
+  it('should highlight rests with durations', () => {
+    const result = highlightMusicLine('z2 Z/2 z3/2');
+    expect(result).toContain('<span class="abc-rest">z</span><span class="abc-duration abc-duration-long">2</span>');
+    expect(result).toContain('<span class="abc-rest">Z</span><span class="abc-duration abc-duration-short">/2</span>');
+    expect(result).toContain('<span class="abc-rest">z</span><span class="abc-duration abc-duration-fraction">3/2</span>');
+  });
+
+  it('should highlight invisible rests', () => {
+    const result = highlightMusicLine('C x D x2 E');
+    expect(result).toContain('<span class="abc-rest-invisible">x</span>');
+    expect(result).toContain('<span class="abc-rest-invisible">x</span><span class="abc-duration abc-duration-long">2</span>');
   });
 
   it('should handle complex music line', () => {

@@ -19,6 +19,15 @@
   color: #ffffff; /* 白色 - 音符 (C, D, E, F, G, A, B) */
 }
 
+.abc-rest {
+  color: #9ca3af; /* グレー - 休符 (z, Z) */
+}
+
+.abc-rest-invisible {
+  color: #6b7280; /* 薄いグレー - 見えない休符 (x) */
+  opacity: 0.5;
+}
+
 .abc-accidental {
   color: #f59e0b; /* オレンジ色 - 臨時記号 (^シャープ, _フラット, =ナチュラル) */
 }
