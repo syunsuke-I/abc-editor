@@ -16,7 +16,7 @@
 }
 
 .abc-note {
-  color: #10b981; /* 緑色 - 音符 (C, D, E, F, G, A, B) */
+  color: #ffffff; /* 白色 - 音符 (C, D, E, F, G, A, B) */
 }
 
 .abc-accidental {
@@ -24,8 +24,19 @@
 }
 
 .abc-duration {
-  color: #fb923c; /* 明るいオレンジ色 - 音長記号 (2, /2, 3/2 など) */
   font-weight: 600;
+}
+
+.abc-duration-long {
+  color: #f97316; /* 濃いオレンジ - 長い音 (2, 4, 8 など) */
+}
+
+.abc-duration-short {
+  color: #fdba74; /* 薄いオレンジ - 短い音 (/2, /4, /8 など) */
+}
+
+.abc-duration-fraction {
+  color: #fbbf24; /* 黄色 - 混合分数 (3/2, 5/4 など) */
 }
 
 .abc-bar {
@@ -59,6 +70,11 @@
 
 .abc-slur-level-4 {
   color: #84cc16; /* ライム - スラーレベル4（4段ネスト） */
+}
+
+.abc-tuplet {
+  color: #22c55e; /* 緑色 - 連音符記号 ((3, (5, (7 など) */
+  font-weight: 700;
 }
 
 .abc-comment {

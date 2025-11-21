@@ -5,6 +5,7 @@ import {
   ABC_BAR_PATTERN,
   ABC_CHORD_BRACKET_PATTERN,
   ABC_SLUR_PATTERN,
+  ABC_TUPLET_PATTERN,
   ABC_DURATION_PATTERN,
   ABC_COMMENT_PATTERN,
 } from '../types/abc';
@@ -67,14 +68,33 @@ const highlightMusicLine = (line: string): string => {
       continue;
     }
 
-    // スラー（ネストレベルに応じて色分け）
+    // 連音符とスラーの区別
     if (ABC_SLUR_PATTERN.test(char)) {
       if (char === '(') {
-        // 開始括弧: 現在のレベルで色を適用してからレベルを上げる
+        // 次の文字が数字なら連音符記号
+        if (i + 1 < line.length && /\d/.test(line[i + 1])) {
+          let tuplet = char;
+          let j = i + 1;
+
+          // 数字を取得
+          while (j < line.length && /\d/.test(line[j])) {
+            tuplet += line[j];
+            j++;
+          }
+
+          // 連音符記号として処理
+          if (ABC_TUPLET_PATTERN.test(tuplet)) {
+            result += `<span class="abc-tuplet">${escapeHtml(tuplet)}</span>`;
+            i = j;
+            continue;
+          }
+        }
+
+        // 通常のスラー開始括弧
         result += `<span class="abc-slur abc-slur-level-${slurLevel % 5}">${escapeHtml(char)}</span>`;
         slurLevel++;
       } else if (char === ')') {
-        // 終了括弧: レベルを下げてからそのレベルで色を適用
+        // スラー終了括弧
         slurLevel = Math.max(0, slurLevel - 1);
         result += `<span class="abc-slur abc-slur-level-${slurLevel % 5}">${escapeHtml(char)}</span>`;
       }
@@ -119,7 +139,21 @@ const highlightMusicLine = (line: string): string => {
 
         // 音長記号が有効な形式かチェック
         if (duration && ABC_DURATION_PATTERN.test(duration)) {
-          result += `<span class="abc-duration">${escapeHtml(duration)}</span>`;
+          // 音長記号のタイプを判定
+          let durationClass = 'abc-duration';
+
+          if (duration.startsWith('/')) {
+            // 短い音: /2, /4, /8 など
+            durationClass += ' abc-duration-short';
+          } else if (duration.includes('/')) {
+            // 混合分数: 3/2, 5/4 など
+            durationClass += ' abc-duration-fraction';
+          } else {
+            // 長い音: 2, 4, 8 など
+            durationClass += ' abc-duration-long';
+          }
+
+          result += `<span class="${durationClass}">${escapeHtml(duration)}</span>`;
           i = j;
         }
       }

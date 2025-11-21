@@ -42,5 +42,6 @@ export const ABC_ACCIDENTAL_PATTERN = /[\^_=]/;
 export const ABC_BAR_PATTERN = /\|[:|\]]?|:?\|/;
 export const ABC_CHORD_BRACKET_PATTERN = /[\\[\]]/;
 export const ABC_SLUR_PATTERN = /[()]/;
+export const ABC_TUPLET_PATTERN = /^\(\d+$/; // 連音符記号 ((3, (5, (7 など)
 export const ABC_DURATION_PATTERN = /^\/?\d+(\/\d+)?$/; // 音長記号 (2, /2, 3/2 など)
 export const ABC_COMMENT_PATTERN = /^%.*$/;
