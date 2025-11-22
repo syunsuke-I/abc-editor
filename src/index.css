@@ -115,6 +115,11 @@
   font-weight: 600;
 }
 
+.abc-volta-bracket {
+  color: #fb923c; /* オレンジ色 - 反復記号 ([1, [2, [3 など) */
+  font-weight: 700;
+}
+
 .abc-comment {
   color: #6b7280; /* グレー色 - コメント (%で始まる行) */
   font-style: italic;

@@ -13,6 +13,7 @@ import {
   ABC_CHORD_SYMBOL_PATTERN,
   ABC_DECORATION_PATTERN,
   ABC_GRACE_NOTE_PATTERN,
+  ABC_VOLTA_BRACKET_PATTERN,
   ABC_COMMENT_PATTERN,
 } from '../types/abc';
 
@@ -422,6 +423,39 @@ export const parseGraceNote = (line: string, index: number): ParseResult | null 
   };
 };
 
+// 反復記号（Volta bracket）のパース
+export const parseVoltaBracket = (line: string, index: number): ParseResult | null => {
+  const char = line[index];
+
+  // 反復記号は [ で始まる
+  if (char !== '[') {
+    return null;
+  }
+
+  // 次の文字が数字かチェック
+  if (index + 1 >= line.length || !/\d/.test(line[index + 1])) {
+    return null;
+  }
+
+  // [ と数字を取得
+  let j = index + 1;
+  while (j < line.length && /\d/.test(line[j])) {
+    j++;
+  }
+
+  const voltaBracket = line.substring(index, j);
+
+  // パターンチェック
+  if (!ABC_VOLTA_BRACKET_PATTERN.test(voltaBracket)) {
+    return null;
+  }
+
+  return {
+    html: `<span class="abc-volta-bracket">${escapeHtml(voltaBracket)}</span>`,
+    nextIndex: j,
+  };
+};
+
 // 楽譜行の文字単位ハイライト
 export const highlightMusicLine = (line: string): string => {
   let result = '';
@@ -493,6 +527,13 @@ export const highlightMusicLine = (line: string): string => {
     if (noteWithDuration) {
       result += noteWithDuration.html;
       i = noteWithDuration.nextIndex;
+      continue;
+    }
+
+    const voltaBracket = parseVoltaBracket(line, i);
+    if (voltaBracket) {
+      result += voltaBracket.html;
+      i = voltaBracket.nextIndex;
       continue;
     }
 

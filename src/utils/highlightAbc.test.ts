@@ -12,6 +12,7 @@ import {
   parseChordSymbol,
   parseDecoration,
   parseGraceNote,
+  parseVoltaBracket,
   highlightMusicLine,
   highlightAbc,
 } from './highlightAbc';
@@ -573,6 +574,49 @@ describe('parseGraceNote', () => {
   });
 });
 
+describe('parseVoltaBracket', () => {
+  it('should parse first volta bracket [1', () => {
+    const result = parseVoltaBracket('[1', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-volta-bracket">[1</span>',
+      nextIndex: 2,
+    });
+  });
+
+  it('should parse second volta bracket [2', () => {
+    const result = parseVoltaBracket('[2', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-volta-bracket">[2</span>',
+      nextIndex: 2,
+    });
+  });
+
+  it('should parse third volta bracket [3', () => {
+    const result = parseVoltaBracket('[3', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-volta-bracket">[3</span>',
+      nextIndex: 2,
+    });
+  });
+
+  it('should parse multi-digit volta bracket [10', () => {
+    const result = parseVoltaBracket('[10', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-volta-bracket">[10</span>',
+      nextIndex: 3,
+    });
+  });
+
+  it('should return null for plain bracket [', () => {
+    expect(parseVoltaBracket('[C', 0)).toBeNull();
+  });
+
+  it('should return null for non-bracket characters', () => {
+    expect(parseVoltaBracket('C', 0)).toBeNull();
+    expect(parseVoltaBracket('|', 0)).toBeNull();
+  });
+});
+
 describe('highlightMusicLine', () => {
   it('should highlight simple note sequence', () => {
     const result = highlightMusicLine('C D E F');
@@ -739,6 +783,15 @@ describe('highlightMusicLine', () => {
     expect(result).toContain('<span class="abc-note">C</span>');
   });
 
+  it('should highlight volta brackets in music line', () => {
+    const result = highlightMusicLine('C D E F |[1 G4 :|[2 A4 |]');
+    expect(result).toContain('<span class="abc-volta-bracket">[1</span>');
+    expect(result).toContain('<span class="abc-volta-bracket">[2</span>');
+    expect(result).toContain('<span class="abc-note">C</span>');
+    expect(result).toContain('<span class="abc-note">G</span>');
+    expect(result).toContain('<span class="abc-note">A</span>');
+  });
+
   it('should handle complex music line', () => {
     const result = highlightMusicLine('^C2 D/2 | [CEG] (3DEF | (AB) |');
     expect(result).toContain('abc-accidental');
@@ -790,7 +843,7 @@ T:Complete Test
 M:4/4
 K:C
 % This tests all features
-!p!"C"^C2 z/2 | [CEG] (3DEF.- | "Am"(AB) ~C {g}!fermata!G |`;
+!p!"C"^C2 z/2 | [CEG] (3DEF.- |[1 "Am"(AB) ~C {g}!fermata!G :|[2 A4 |`;
     const result = highlightAbc(abc);
 
     // Meta fields
@@ -808,6 +861,11 @@ K:C
     // Grace notes
     expect(result).toContain('abc-grace-note');
     expect(result).toContain('{g}');
+
+    // Volta brackets
+    expect(result).toContain('abc-volta-bracket');
+    expect(result).toContain('[1');
+    expect(result).toContain('[2');
 
     // Chord symbols
     expect(result).toContain('abc-chord-symbol');
