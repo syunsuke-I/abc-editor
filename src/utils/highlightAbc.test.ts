@@ -9,9 +9,11 @@ import {
   parseRest,
   parseTie,
   parseOrnament,
+  parseAnnotation,
   parseChordSymbol,
   parseDecoration,
   parseGraceNote,
+  parseInlineField,
   parseVoltaBracket,
   parseBrokenRhythm,
   highlightMusicLine,
@@ -487,6 +489,66 @@ describe('parseChordSymbol', () => {
     expect(parseChordSymbol('C', 0)).toBeNull();
     expect(parseChordSymbol('|', 0)).toBeNull();
   });
+
+  it('should return null for annotations (they should be parsed by parseAnnotation)', () => {
+    expect(parseChordSymbol('"^above"', 0)).toBeNull();
+    expect(parseChordSymbol('"_below"', 0)).toBeNull();
+  });
+});
+
+describe('parseAnnotation', () => {
+  it('should parse annotation above "^crescendo"', () => {
+    const result = parseAnnotation('"^crescendo"', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-annotation">&quot;^crescendo&quot;</span>',
+      nextIndex: 12,
+    });
+  });
+
+  it('should parse annotation below "_pizz"', () => {
+    const result = parseAnnotation('"_pizz"', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-annotation">&quot;_pizz&quot;</span>',
+      nextIndex: 7,
+    });
+  });
+
+  it('should parse annotation left "<text"', () => {
+    const result = parseAnnotation('"<left"', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-annotation">&quot;&lt;left&quot;</span>',
+      nextIndex: 7,
+    });
+  });
+
+  it('should parse annotation right ">text"', () => {
+    const result = parseAnnotation('">right"', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-annotation">&quot;&gt;right&quot;</span>',
+      nextIndex: 8,
+    });
+  });
+
+  it('should parse annotation with coordinates "@5,10text"', () => {
+    const result = parseAnnotation('"@5,10text"', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-annotation">&quot;@5,10text&quot;</span>',
+      nextIndex: 11,
+    });
+  });
+
+  it('should return null for chord symbols', () => {
+    expect(parseAnnotation('"C"', 0)).toBeNull();
+    expect(parseAnnotation('"Am7"', 0)).toBeNull();
+  });
+
+  it('should return null for unclosed quote', () => {
+    expect(parseAnnotation('"^text', 0)).toBeNull();
+  });
+
+  it('should return null for non-quoted text', () => {
+    expect(parseAnnotation('^text', 0)).toBeNull();
+  });
 });
 
 describe('parseDecoration', () => {
@@ -663,6 +725,57 @@ describe('parseVoltaBracket', () => {
   it('should return null for non-bracket characters', () => {
     expect(parseVoltaBracket('C', 0)).toBeNull();
     expect(parseVoltaBracket('|', 0)).toBeNull();
+  });
+});
+
+describe('parseInlineField', () => {
+  it('should parse key change [K:G]', () => {
+    const result = parseInlineField('[K:G]', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-inline-field-bracket">[</span><span class="abc-inline-field-key">K:</span><span class="abc-inline-field-value">G</span><span class="abc-inline-field-bracket">]</span>',
+      nextIndex: 5,
+    });
+  });
+
+  it('should parse meter change [M:3/4]', () => {
+    const result = parseInlineField('[M:3/4]', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-inline-field-bracket">[</span><span class="abc-inline-field-key">M:</span><span class="abc-inline-field-value">3/4</span><span class="abc-inline-field-bracket">]</span>',
+      nextIndex: 7,
+    });
+  });
+
+  it('should parse tempo change [Q:1/4=120]', () => {
+    const result = parseInlineField('[Q:1/4=120]', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-inline-field-bracket">[</span><span class="abc-inline-field-key">Q:</span><span class="abc-inline-field-value">1/4=120</span><span class="abc-inline-field-bracket">]</span>',
+      nextIndex: 11,
+    });
+  });
+
+  it('should parse voice change [V:1]', () => {
+    const result = parseInlineField('[V:1]', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-inline-field-bracket">[</span><span class="abc-inline-field-key">V:</span><span class="abc-inline-field-value">1</span><span class="abc-inline-field-bracket">]</span>',
+      nextIndex: 5,
+    });
+  });
+
+  it('should return null for volta brackets', () => {
+    expect(parseInlineField('[1', 0)).toBeNull();
+    expect(parseInlineField('[2', 0)).toBeNull();
+  });
+
+  it('should return null for unclosed bracket', () => {
+    expect(parseInlineField('[K:G', 0)).toBeNull();
+  });
+
+  it('should return null for invalid field', () => {
+    expect(parseInlineField('[foo:bar]', 0)).toBeNull();
+  });
+
+  it('should return null for non-bracket characters', () => {
+    expect(parseInlineField('K:G', 0)).toBeNull();
   });
 });
 
@@ -914,6 +1027,24 @@ describe('highlightMusicLine', () => {
     expect(result).toContain('<span class="abc-duration abc-duration-short">/2</span>');
   });
 
+  it('should highlight annotations in music line', () => {
+    const result = highlightMusicLine('"^cresc"C "^dim"D |');
+    expect(result).toContain('<span class="abc-annotation">&quot;^cresc&quot;</span>');
+    expect(result).toContain('<span class="abc-annotation">&quot;^dim&quot;</span>');
+    expect(result).toContain('<span class="abc-note">C</span>');
+    expect(result).toContain('<span class="abc-note">D</span>');
+  });
+
+  it('should highlight inline fields in music line', () => {
+    const result = highlightMusicLine('[K:D]C D E [M:3/4]F G A |');
+    expect(result).toContain('<span class="abc-inline-field-key">K:</span>');
+    expect(result).toContain('<span class="abc-inline-field-value">D</span>');
+    expect(result).toContain('<span class="abc-inline-field-key">M:</span>');
+    expect(result).toContain('<span class="abc-inline-field-value">3/4</span>');
+    expect(result).toContain('<span class="abc-note">C</span>');
+    expect(result).toContain('<span class="abc-note">F</span>');
+  });
+
   it('should handle complex music line', () => {
     const result = highlightMusicLine('^C2 D/2 | [CEG] (3DEF | (AB) |');
     expect(result).toContain('abc-accidental');
@@ -976,7 +1107,7 @@ T:Complete Test
 M:4/4
 K:C
 % This tests all features
-!p!"C"^C2 z/2 | [CEG] (3DEF.- |[1 "Am"(AB)>C ~C {g}!fermata!G' :|[2 A,,4 |`;
+!p!"C"^C2 z/2 | [CEG] (3DEF.- |[1 "Am"(AB)>C ~C {g}!fermata!G' :|[2 A,,4 [K:G]"^pizz"[M:3/4]F |`;
     const result = highlightAbc(abc);
 
     // Meta fields
@@ -1035,6 +1166,13 @@ K:C
     // Octave markers
     expect(result).toContain('abc-octave-high');
     expect(result).toContain('abc-octave-low');
+
+    // Annotations
+    expect(result).toContain('abc-annotation');
+
+    // Inline fields
+    expect(result).toContain('abc-inline-field-key');
+    expect(result).toContain('abc-inline-field-value');
 
     // Bar lines
     expect(result).toContain('abc-bar');

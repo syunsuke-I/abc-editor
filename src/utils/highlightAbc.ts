@@ -12,9 +12,11 @@ import {
   ABC_TIE_PATTERN,
   ABC_ORNAMENT_PATTERN,
   ABC_CHORD_SYMBOL_PATTERN,
+  ABC_ANNOTATION_PATTERN,
   ABC_DECORATION_PATTERN,
   ABC_GRACE_NOTE_PATTERN,
   ABC_VOLTA_BRACKET_PATTERN,
+  ABC_INLINE_FIELD_PATTERN,
   ABC_BROKEN_RHYTHM_PATTERN,
   ABC_COMMENT_PATTERN,
 } from '../types/abc';
@@ -340,6 +342,40 @@ export const parseOrnament = (line: string, index: number): ParseResult | null =
   };
 };
 
+// 注釈のパース
+export const parseAnnotation = (line: string, index: number): ParseResult | null => {
+  const char = line[index];
+
+  // 注釈は " で始まる
+  if (char !== '"') {
+    return null;
+  }
+
+  // 閉じる " を探す
+  let j = index + 1;
+  while (j < line.length && line[j] !== '"') {
+    j++;
+  }
+
+  // 閉じる " が見つからない場合
+  if (j >= line.length) {
+    return null;
+  }
+
+  // " を含めた注釈全体を取得
+  const annotation = line.substring(index, j + 1);
+
+  // 注釈パターンチェック (^, _, <, >, @ で始まる)
+  if (!ABC_ANNOTATION_PATTERN.test(annotation)) {
+    return null;
+  }
+
+  return {
+    html: `<span class="abc-annotation">${escapeHtml(annotation)}</span>`,
+    nextIndex: j + 1,
+  };
+};
+
 // コード記号のパース
 export const parseChordSymbol = (line: string, index: number): ParseResult | null => {
   const char = line[index];
@@ -360,16 +396,21 @@ export const parseChordSymbol = (line: string, index: number): ParseResult | nul
     return null;
   }
 
-  // " を含めたコード記号全体を取得
-  const chordSymbol = line.substring(index, j + 1);
+  // " を含めた文字列全体を取得
+  const quotedString = line.substring(index, j + 1);
 
-  // パターンチェック
-  if (!ABC_CHORD_SYMBOL_PATTERN.test(chordSymbol)) {
+  // 注釈かどうかチェック（注釈なら null を返す）
+  if (ABC_ANNOTATION_PATTERN.test(quotedString)) {
+    return null;
+  }
+
+  // コード記号パターンチェック
+  if (!ABC_CHORD_SYMBOL_PATTERN.test(quotedString)) {
     return null;
   }
 
   return {
-    html: `<span class="abc-chord-symbol">${escapeHtml(chordSymbol)}</span>`,
+    html: `<span class="abc-chord-symbol">${escapeHtml(quotedString)}</span>`,
     nextIndex: j + 1,
   };
 };
@@ -438,6 +479,43 @@ export const parseGraceNote = (line: string, index: number): ParseResult | null 
 
   return {
     html: `<span class="abc-grace-note">${escapeHtml(graceNote)}</span>`,
+    nextIndex: j + 1,
+  };
+};
+
+// インラインフィールドのパース
+export const parseInlineField = (line: string, index: number): ParseResult | null => {
+  const char = line[index];
+
+  // インラインフィールドは [ で始まる
+  if (char !== '[') {
+    return null;
+  }
+
+  // 閉じる ] を探す
+  let j = index + 1;
+  while (j < line.length && line[j] !== ']') {
+    j++;
+  }
+
+  // 閉じる ] が見つからない場合
+  if (j >= line.length) {
+    return null;
+  }
+
+  // [ を含めたインラインフィールド全体を取得
+  const inlineField = line.substring(index, j + 1);
+
+  // パターンチェック ([K:G], [M:3/4] など)
+  const match = inlineField.match(ABC_INLINE_FIELD_PATTERN);
+  if (!match) {
+    return null;
+  }
+
+  const [, key, value] = match;
+
+  return {
+    html: `<span class="abc-inline-field-bracket">[</span><span class="abc-inline-field-key">${escapeHtml(key)}:</span><span class="abc-inline-field-value">${escapeHtml(value)}</span><span class="abc-inline-field-bracket">]</span>`,
     nextIndex: j + 1,
   };
 };
@@ -546,6 +624,13 @@ export const highlightMusicLine = (line: string): string => {
       continue;
     }
 
+    const annotation = parseAnnotation(line, i);
+    if (annotation) {
+      result += annotation.html;
+      i = annotation.nextIndex;
+      continue;
+    }
+
     const chordSymbol = parseChordSymbol(line, i);
     if (chordSymbol) {
       result += chordSymbol.html;
@@ -581,6 +666,13 @@ export const highlightMusicLine = (line: string): string => {
     if (brokenRhythm) {
       result += brokenRhythm.html;
       i = brokenRhythm.nextIndex;
+      continue;
+    }
+
+    const inlineField = parseInlineField(line, i);
+    if (inlineField) {
+      result += inlineField.html;
+      i = inlineField.nextIndex;
       continue;
     }
 

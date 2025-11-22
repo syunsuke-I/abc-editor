@@ -128,6 +128,12 @@
   font-weight: 700;
 }
 
+.abc-annotation {
+  color: #fbbf24; /* アンバー色 - 注釈 ("^above", "_below" など) */
+  font-weight: 600;
+  font-style: italic;
+}
+
 .abc-decoration {
   color: #c084fc; /* パープル色 - 装飾記号 (!trill!, !fermata!, !p!, !f! など) */
   font-weight: 700;
@@ -141,6 +147,19 @@
 .abc-volta-bracket {
   color: #fb923c; /* オレンジ色 - 反復記号 ([1, [2, [3 など) */
   font-weight: 700;
+}
+
+.abc-inline-field-bracket {
+  color: #94a3b8; /* スレートグレー - インラインフィールド括弧 */
+}
+
+.abc-inline-field-key {
+  color: #60a5fa; /* 青色 - インラインフィールドのキー */
+  font-weight: 600;
+}
+
+.abc-inline-field-value {
+  color: #a78bfa; /* 紫色 - インラインフィールドの値 */
 }
 
 .abc-comment {
