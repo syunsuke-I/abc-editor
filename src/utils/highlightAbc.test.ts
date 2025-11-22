@@ -203,6 +203,54 @@ describe('parseNoteWithDuration', () => {
     });
   });
 
+  it('should parse note with high octave marker', () => {
+    const result = parseNoteWithDuration("c'", 0);
+    expect(result).toEqual({
+      html: '<span class="abc-note">c</span><span class="abc-octave-high">&#039;</span>',
+      nextIndex: 2,
+    });
+  });
+
+  it('should parse note with multiple high octave markers', () => {
+    const result = parseNoteWithDuration("c''", 0);
+    expect(result).toEqual({
+      html: '<span class="abc-note">c</span><span class="abc-octave-high">&#039;&#039;</span>',
+      nextIndex: 3,
+    });
+  });
+
+  it('should parse note with low octave marker', () => {
+    const result = parseNoteWithDuration('C,', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-note">C</span><span class="abc-octave-low">,</span>',
+      nextIndex: 2,
+    });
+  });
+
+  it('should parse note with multiple low octave markers', () => {
+    const result = parseNoteWithDuration('C,,', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-note">C</span><span class="abc-octave-low">,,</span>',
+      nextIndex: 3,
+    });
+  });
+
+  it('should parse note with octave and duration', () => {
+    const result = parseNoteWithDuration("c'2", 0);
+    expect(result).toEqual({
+      html: '<span class="abc-note">c</span><span class="abc-octave-high">&#039;</span><span class="abc-duration abc-duration-long">2</span>',
+      nextIndex: 3,
+    });
+  });
+
+  it('should parse note with low octave and duration', () => {
+    const result = parseNoteWithDuration('C,/2', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-note">C</span><span class="abc-octave-low">,</span><span class="abc-duration abc-duration-short">/2</span>',
+      nextIndex: 4,
+    });
+  });
+
   it('should return null for non-note characters', () => {
     expect(parseNoteWithDuration('|', 0)).toBeNull();
     expect(parseNoteWithDuration('(', 0)).toBeNull();
@@ -851,6 +899,21 @@ describe('highlightMusicLine', () => {
     expect(result).toContain('<span class="abc-note">B</span>');
   });
 
+  it('should highlight octave markers in music line', () => {
+    const result = highlightMusicLine("c' d'' C, D,, e'2 F,/2");
+    expect(result).toContain('<span class="abc-octave-high">&#039;</span>');
+    expect(result).toContain('<span class="abc-octave-high">&#039;&#039;</span>');
+    expect(result).toContain('<span class="abc-octave-low">,</span>');
+    expect(result).toContain('<span class="abc-octave-low">,,</span>');
+    expect(result).toContain('<span class="abc-note">c</span>');
+    expect(result).toContain('<span class="abc-note">d</span>');
+    expect(result).toContain('<span class="abc-note">C</span>');
+    expect(result).toContain('<span class="abc-note">D</span>');
+    // オクターブと音長の組み合わせ
+    expect(result).toContain('<span class="abc-duration abc-duration-long">2</span>');
+    expect(result).toContain('<span class="abc-duration abc-duration-short">/2</span>');
+  });
+
   it('should handle complex music line', () => {
     const result = highlightMusicLine('^C2 D/2 | [CEG] (3DEF | (AB) |');
     expect(result).toContain('abc-accidental');
@@ -913,7 +976,7 @@ T:Complete Test
 M:4/4
 K:C
 % This tests all features
-!p!"C"^C2 z/2 | [CEG] (3DEF.- |[1 "Am"(AB)>C ~C {g}!fermata!G :|[2 A4 |`;
+!p!"C"^C2 z/2 | [CEG] (3DEF.- |[1 "Am"(AB)>C ~C {g}!fermata!G' :|[2 A,,4 |`;
     const result = highlightAbc(abc);
 
     // Meta fields
@@ -968,6 +1031,10 @@ K:C
 
     // Broken rhythm
     expect(result).toContain('abc-broken-rhythm');
+
+    // Octave markers
+    expect(result).toContain('abc-octave-high');
+    expect(result).toContain('abc-octave-low');
 
     // Bar lines
     expect(result).toContain('abc-bar');

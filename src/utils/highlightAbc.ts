@@ -2,6 +2,7 @@ import {
   ABC_FIELD_PATTERN,
   ABC_NOTE_PATTERN,
   ABC_ACCIDENTAL_PATTERN,
+  ABC_OCTAVE_PATTERN,
   ABC_BAR_PATTERN,
   ABC_CHORD_BRACKET_PATTERN,
   ABC_SLUR_PATTERN,
@@ -139,6 +140,19 @@ export const parseNoteWithDuration = (line: string, index: number): ParseResult 
 
   let html = `<span class="abc-note">${escapeHtml(char)}</span>`;
   let j = index + 1;
+
+  // 音符の後に続くオクターブ記号をチェック (': 高く, ,: 低く)
+  let octave = '';
+  while (j < line.length && ABC_OCTAVE_PATTERN.test(line[j])) {
+    octave += line[j];
+    j++;
+  }
+
+  if (octave) {
+    // オクターブ記号の種類を判定
+    const octaveClass = octave[0] === "'" ? 'abc-octave-high' : 'abc-octave-low';
+    html += `<span class="${octaveClass}">${escapeHtml(octave)}</span>`;
+  }
 
   // 音符の後に続く音長記号をチェック
   let duration = '';

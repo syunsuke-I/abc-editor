@@ -28,6 +28,16 @@
   color: #ffffff; /* 白色 - 音符 (C, D, E, F, G, A, B) */
 }
 
+.abc-octave-high {
+  color: #93c5fd; /* 明るい青 - 高オクターブ記号 (', '', etc.) */
+  font-weight: 600;
+}
+
+.abc-octave-low {
+  color: #7c3aed; /* 濃い紫 - 低オクターブ記号 (,, ,,, etc.) */
+  font-weight: 600;
+}
+
 .abc-rest {
   color: #9ca3af; /* グレー - 休符 (z, Z) */
 }
