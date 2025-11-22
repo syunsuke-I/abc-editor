@@ -10,6 +10,7 @@ import {
   parseTie,
   parseOrnament,
   parseChordSymbol,
+  parseDecoration,
   highlightMusicLine,
   highlightAbc,
 } from './highlightAbc';
@@ -437,6 +438,89 @@ describe('parseChordSymbol', () => {
   });
 });
 
+describe('parseDecoration', () => {
+  it('should parse trill !trill!', () => {
+    const result = parseDecoration('!trill!', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-decoration">!trill!</span>',
+      nextIndex: 7,
+    });
+  });
+
+  it('should parse fermata !fermata!', () => {
+    const result = parseDecoration('!fermata!', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-decoration">!fermata!</span>',
+      nextIndex: 9,
+    });
+  });
+
+  it('should parse dynamics !p!', () => {
+    const result = parseDecoration('!p!', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-decoration">!p!</span>',
+      nextIndex: 3,
+    });
+  });
+
+  it('should parse dynamics !f!', () => {
+    const result = parseDecoration('!f!', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-decoration">!f!</span>',
+      nextIndex: 3,
+    });
+  });
+
+  it('should parse accent !>!', () => {
+    const result = parseDecoration('!>!', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-decoration">!&gt;!</span>',
+      nextIndex: 3,
+    });
+  });
+
+  it('should parse crescendo !crescendo(!', () => {
+    const result = parseDecoration('!crescendo(!', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-decoration">!crescendo(!</span>',
+      nextIndex: 12,
+    });
+  });
+
+  it('should parse segno !segno!', () => {
+    const result = parseDecoration('!segno!', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-decoration">!segno!</span>',
+      nextIndex: 7,
+    });
+  });
+
+  it('should parse coda !coda!', () => {
+    const result = parseDecoration('!coda!', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-decoration">!coda!</span>',
+      nextIndex: 6,
+    });
+  });
+
+  it('should parse mordent !mordent!', () => {
+    const result = parseDecoration('!mordent!', 0);
+    expect(result).toEqual({
+      html: '<span class="abc-decoration">!mordent!</span>',
+      nextIndex: 9,
+    });
+  });
+
+  it('should return null for unclosed decoration', () => {
+    expect(parseDecoration('!trill', 0)).toBeNull();
+  });
+
+  it('should return null for non-decoration characters', () => {
+    expect(parseDecoration('C', 0)).toBeNull();
+    expect(parseDecoration('|', 0)).toBeNull();
+  });
+});
+
 describe('highlightMusicLine', () => {
   it('should highlight simple note sequence', () => {
     const result = highlightMusicLine('C D E F');
@@ -577,6 +661,24 @@ describe('highlightMusicLine', () => {
     expect(result).toContain('<span class="abc-note">G</span>');
   });
 
+  it('should highlight decorations in music line', () => {
+    const result = highlightMusicLine('!trill!C !fermata!G |');
+    expect(result).toContain('<span class="abc-decoration">!trill!</span>');
+    expect(result).toContain('<span class="abc-decoration">!fermata!</span>');
+    expect(result).toContain('<span class="abc-note">C</span>');
+    expect(result).toContain('<span class="abc-note">G</span>');
+  });
+
+  it('should highlight dynamics in music line', () => {
+    const result = highlightMusicLine('!p!C D !f!G A |');
+    expect(result).toContain('<span class="abc-decoration">!p!</span>');
+    expect(result).toContain('<span class="abc-decoration">!f!</span>');
+    expect(result).toContain('<span class="abc-note">C</span>');
+    expect(result).toContain('<span class="abc-note">D</span>');
+    expect(result).toContain('<span class="abc-note">G</span>');
+    expect(result).toContain('<span class="abc-note">A</span>');
+  });
+
   it('should handle complex music line', () => {
     const result = highlightMusicLine('^C2 D/2 | [CEG] (3DEF | (AB) |');
     expect(result).toContain('abc-accidental');
@@ -628,7 +730,7 @@ T:Complete Test
 M:4/4
 K:C
 % This tests all features
-"C"^C2 z/2 | [CEG] (3DEF.- | "Am"(AB) ~C |`;
+!p!"C"^C2 z/2 | [CEG] (3DEF.- | "Am"(AB) ~C !fermata!G |`;
     const result = highlightAbc(abc);
 
     // Meta fields
@@ -637,6 +739,11 @@ K:C
 
     // Comment
     expect(result).toContain('abc-comment');
+
+    // Decorations
+    expect(result).toContain('abc-decoration');
+    expect(result).toContain('!p!');
+    expect(result).toContain('!fermata!');
 
     // Chord symbols
     expect(result).toContain('abc-chord-symbol');

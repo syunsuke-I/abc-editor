@@ -11,6 +11,7 @@ import {
   ABC_TIE_PATTERN,
   ABC_ORNAMENT_PATTERN,
   ABC_CHORD_SYMBOL_PATTERN,
+  ABC_DECORATION_PATTERN,
   ABC_COMMENT_PATTERN,
 } from '../types/abc';
 
@@ -352,6 +353,40 @@ export const parseChordSymbol = (line: string, index: number): ParseResult | nul
   };
 };
 
+// 装飾記号のパース
+export const parseDecoration = (line: string, index: number): ParseResult | null => {
+  const char = line[index];
+
+  // 装飾記号は ! で始まる
+  if (char !== '!') {
+    return null;
+  }
+
+  // 閉じる ! を探す
+  let j = index + 1;
+  while (j < line.length && line[j] !== '!') {
+    j++;
+  }
+
+  // 閉じる ! が見つからない場合
+  if (j >= line.length) {
+    return null;
+  }
+
+  // ! を含めた装飾記号全体を取得
+  const decoration = line.substring(index, j + 1);
+
+  // パターンチェック
+  if (!ABC_DECORATION_PATTERN.test(decoration)) {
+    return null;
+  }
+
+  return {
+    html: `<span class="abc-decoration">${escapeHtml(decoration)}</span>`,
+    nextIndex: j + 1,
+  };
+};
+
 // 楽譜行の文字単位ハイライト
 export const highlightMusicLine = (line: string): string => {
   let result = '';
@@ -364,6 +399,13 @@ export const highlightMusicLine = (line: string): string => {
     if (barLine) {
       result += barLine.html;
       i = barLine.nextIndex;
+      continue;
+    }
+
+    const decoration = parseDecoration(line, i);
+    if (decoration) {
+      result += decoration.html;
+      i = decoration.nextIndex;
       continue;
     }
 
