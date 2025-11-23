@@ -1,8 +1,9 @@
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { useLineNumbers } from "../hooks/useLineNumbers";
 import { highlightAbc } from "../utils/highlightAbc";
 import { useAbcAutoComplete } from "../hooks/useAbcAutoComplete";
 import { SuggestionList } from "./SuggestionList";
+import { validateAbc } from "../utils/validateAbc";
 
 interface AbcEditorProps {
   value: string;
@@ -16,6 +17,7 @@ export const AbcEditor = ({ value, onChange }: AbcEditorProps) => {
 
   const lineNumbers = useLineNumbers(value);
   const highlightedCode = highlightAbc(value);
+  const validationErrors = useMemo(() => validateAbc(value), [value]);
 
   // オートコンプリート機能
   const {
@@ -37,7 +39,9 @@ export const AbcEditor = ({ value, onChange }: AbcEditorProps) => {
 
   return (
     <div className="w-full md:w-1/2 h-2/3 md:h-full flex flex-col p-4" style={{ backgroundColor: '#161616' }}>
-      <div className="w-full h-full flex rounded-lg border border-slate-600 overflow-hidden" style={{ backgroundColor: '#1a1a1a' }}>
+      <div className="w-full flex-1 flex flex-col rounded-lg border border-slate-600 overflow-hidden" style={{ backgroundColor: '#1a1a1a' }}>
+        {/* エディタ部分 */}
+        <div className="flex-1 flex overflow-hidden">
         {/* 行番号 */}
         <div
           ref={lineNumbersRef}
@@ -85,6 +89,33 @@ export const AbcEditor = ({ value, onChange }: AbcEditorProps) => {
             />
           )}
         </div>
+        </div>
+
+        {/* エラー表示エリア */}
+        {validationErrors.length > 0 && (
+          <div
+            className="border-t border-slate-600 px-4 py-3 text-xs font-mono overflow-auto"
+            style={{ backgroundColor: '#0f0f0f', maxHeight: '8rem' }}
+          >
+            <div className="text-slate-500 mb-2 text-[10px] uppercase tracking-wide">
+              Validation Errors ({validationErrors.length})
+            </div>
+            {validationErrors.map((error, index) => (
+              <div
+                key={index}
+                className="flex items-start gap-3 mb-2 last:mb-0 hover:bg-slate-800/30 px-2 py-1 rounded transition-colors"
+              >
+                <span className="text-amber-500 shrink-0 mt-0.5">⚠️</span>
+                <div className="flex-1 flex gap-2">
+                  <span className="text-cyan-400 shrink-0">
+                    Ln {error.line + 1}, M{error.measureIndex + 1}:
+                  </span>
+                  <span className="text-amber-300">{error.message}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
