@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import type { Suggestion } from '../data/abcSuggestions';
 
 interface SuggestionListProps {
@@ -15,6 +16,16 @@ export const SuggestionList = ({
   onSelect,
   onMouseEnter,
 }: SuggestionListProps) => {
+  const selectedRef = useRef<HTMLDivElement>(null);
+
+  // 選択されたアイテムを自動的にビューポート内にスクロール
+  useEffect(() => {
+    selectedRef.current?.scrollIntoView({
+      block: 'nearest',
+      behavior: 'smooth',
+    });
+  }, [selectedIndex]);
+
   if (suggestions.length === 0) {
     return null;
   }
@@ -34,6 +45,7 @@ export const SuggestionList = ({
       {suggestions.map((suggestion, index) => (
         <div
           key={`${suggestion.value}-${index}`}
+          ref={index === selectedIndex ? selectedRef : null}
           className={`px-3 py-2 cursor-pointer ${
             index === selectedIndex
               ? 'bg-blue-600 text-white'
