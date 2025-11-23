@@ -45,7 +45,7 @@ describe('parseBarLine', () => {
   it('should parse double bar line', () => {
     const result = parseBarLine('||', 0);
     expect(result).toEqual({
-      html: '<span class="abc-bar">||</span>',
+      html: '<span class="abc-bar-double">||</span>',
       nextIndex: 2,
     });
   });
@@ -853,7 +853,7 @@ describe('highlightMusicLine', () => {
   it('should highlight bar lines', () => {
     const result = highlightMusicLine('C | D || E |: F :| G');
     expect(result).toContain('<span class="abc-bar">|</span>');
-    expect(result).toContain('<span class="abc-bar">||</span>');
+    expect(result).toContain('<span class="abc-bar-double">||</span>');
     expect(result).toContain('<span class="abc-bar">|:</span>');
     expect(result).toContain('<span class="abc-bar">:|</span>');
   });
@@ -1083,7 +1083,7 @@ describe('highlightAbc', () => {
   });
 
   it('should highlight music notation', () => {
-    const result = highlightAbc('C D E F | G A B c |');
+    const result = highlightAbc('F A D E  D A G E |');
     expect(result).toContain('abc-note');
     expect(result).toContain('abc-bar');
   });
