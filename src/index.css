@@ -45,6 +45,12 @@
   fill: #ffffff !important;
 }
 
+/* エディタのプレースホルダーの色 */
+textarea::placeholder {
+  color: #64748b;
+  opacity: 1;
+}
+
 /* シンタックスハイライトの色定義 */
 .abc-meta-key {
   color: var(--abc-key); /* 青みのアクセント - メタ情報のキー (X:, T:, M:, K:など) */

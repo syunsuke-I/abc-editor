@@ -71,7 +71,7 @@ export const AbcEditor = ({ value, onChange }: AbcEditorProps) => {
             onScroll={handleScroll}
             onKeyDown={handleKeyDown}
             spellCheck={false}
-            placeholder="ABC記法を入力..."
+            placeholder="Type /header to insert template..."
           />
 
           {/* オートコンプリート候補リスト */}
