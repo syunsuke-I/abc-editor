@@ -48,8 +48,6 @@ npm install react react-dom abcjs
 ```tsx
 import { useState } from 'react';
 import { AbcEditor, AbcPreview } from '@ovnonvo/abc-editor';
-// Import styles
-import '@ovnonvo/abc-editor/styles.css';
 
 function App() {
   const [abcCode, setAbcCode] = useState(`X:1
@@ -69,7 +67,7 @@ C D E F | G A B c |`);
 export default App;
 ```
 
-**Important:** Don't forget to import the CSS file to get the proper styling!
+**Note:** Styles are automatically included - no need to import CSS separately!
 
 ### Components
 
@@ -180,15 +178,19 @@ import type {
 
 ## Styling
 
-The package includes pre-built CSS with all necessary styles. Simply import the CSS file as shown in the usage example:
+The package automatically injects all necessary styles when you import the components. **No separate CSS import required!**
 
-```tsx
-import '@ovnonvo/abc-editor/styles.css';
+**Note:** You don't need to install or configure Tailwind CSS in your project. All styles are automatically included and injected when you use the components.
+
+If you need custom styling, you can override the CSS variables or add your own CSS rules:
+
+```css
+:root {
+  --abc-key: #your-color;
+  --abc-note: #your-color;
+  /* ... other variables */
+}
 ```
-
-**Note:** You don't need to install or configure Tailwind CSS in your project. All styles are included in the package.
-
-If you need custom styling, you can override the CSS variables defined in the stylesheet or add your own CSS rules.
 
 ## Development
 
