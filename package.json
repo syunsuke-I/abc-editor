@@ -1,5 +1,5 @@
 {
-  "name": "@yourusername/abc-editor",
+  "name": "@ovnonvo/abc-editor",
   "version": "0.1.0",
   "description": "A React component for editing ABC music notation with syntax highlighting, autocomplete, and validation",
   "type": "module",
@@ -30,7 +30,7 @@
     "autocomplete",
     "validation"
   ],
-  "author": "Your Name",
+  "author": "ovnonvo",
   "license": "MIT",
   "repository": {
     "type": "git",
