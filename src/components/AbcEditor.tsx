@@ -39,7 +39,7 @@ export const AbcEditor = ({ value, onChange }: AbcEditorProps) => {
   };
 
   return (
-    <div className="w-full md:w-1/2 h-2/3 md:h-full flex flex-col p-4" style={{ backgroundColor: '#161616' }}>
+    <div className="w-full h-full flex flex-col p-4" style={{ backgroundColor: '#161616' }}>
       <div className="w-full flex-1 flex flex-col rounded-lg border border-slate-600 overflow-hidden" style={{ backgroundColor: '#1a1a1a' }}>
         {/* エディタ部分 */}
         <div className="flex-1 flex overflow-hidden">
