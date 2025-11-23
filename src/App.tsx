@@ -7,7 +7,7 @@ function App() {
 T:Untitled
 M:4/4
 K:C
-C D E F | G A B c |`);
+F A D E | D A G E |`);
 
   return (
     <div className="h-screen flex flex-col-reverse md:flex-row bg-slate-950">

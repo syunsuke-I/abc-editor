@@ -1083,7 +1083,7 @@ describe('highlightAbc', () => {
   });
 
   it('should highlight music notation', () => {
-    const result = highlightAbc('C D E F | G A B c |');
+    const result = highlightAbc('F A D E | D A G E |');
     expect(result).toContain('abc-note');
     expect(result).toContain('abc-bar');
   });
