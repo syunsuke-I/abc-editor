@@ -1,6 +1,6 @@
 {
   "name": "@ovnonvo/abc-editor",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A React component for editing ABC music notation with syntax highlighting, autocomplete, and validation",
   "type": "module",
   "main": "./dist/abc-editor.cjs.js",
@@ -33,18 +33,21 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/abc-editor.git"
+    "url": "https://github.com/syunsuke-I/abc-editor.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/abc-editor/issues"
+    "url": "https://github.com/syunsuke-I/abc-editor/issues"
   },
-  "homepage": "https://github.com/yourusername/abc-editor#readme",
+  "homepage": "https://github.com/syunsuke-I/abc-editor#readme",
   "scripts": {
     "dev": "vite",
+    "dev:demo": "vite --config vite.config.demo.ts",
     "build": "tsc -p tsconfig.lib.json && vite build && rm -f dist/*.svg",
+    "build:demo": "vite build --config vite.config.demo.ts",
     "build:types": "tsc -p tsconfig.lib.json",
     "lint": "eslint .",
     "preview": "vite preview",
+    "preview:demo": "vite preview --config vite.config.demo.ts --outDir dist-demo",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "prepublishOnly": "npm run build"
