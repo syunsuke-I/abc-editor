@@ -25,8 +25,8 @@ export const AbcEditor = ({ value, onChange, theme = 'light' }: AbcEditorProps) 
   // テーマごとの色設定
   const colors = theme === 'dark'
     ? {
-        bg: '#161616',
-        editorBg: '#1a1a1a',
+        bg: '#1a1a1a',
+        editorBg: '#262626',
         lineNumBg: '#0f0f0f',
         caretColor: '#fff',
         placeholderColor: '#64748b',
@@ -37,9 +37,9 @@ export const AbcEditor = ({ value, onChange, theme = 'light' }: AbcEditorProps) 
         errorHighlight: 'rgba(245, 158, 11, 0.2)'
       }
     : {
-        bg: '#f5f5f5',
+        bg: '#f8f9fa',
         editorBg: '#ffffff',
-        lineNumBg: '#eeeeee',
+        lineNumBg: '#e8e8e8',
         caretColor: '#000',
         placeholderColor: '#999999',
         errorHeader: '#64748b',
@@ -69,7 +69,7 @@ export const AbcEditor = ({ value, onChange, theme = 'light' }: AbcEditorProps) 
 
   return (
     <div className="w-full h-full flex flex-col p-4" data-theme={theme} style={{ backgroundColor: colors.bg }}>
-      <div className="w-full flex-1 flex flex-col rounded-lg border border-slate-600 overflow-hidden" style={{ backgroundColor: colors.editorBg }}>
+      <div className="w-full flex-1 flex flex-col rounded-lg overflow-hidden shadow-lg" style={{ backgroundColor: colors.editorBg }}>
         {/* エディタ部分 */}
         <div className="flex-1 flex overflow-hidden">
         {/* 行番号 */}
@@ -165,7 +165,7 @@ export const AbcEditor = ({ value, onChange, theme = 'light' }: AbcEditorProps) 
         {/* エラー表示エリア */}
         {validationErrors.length > 0 && (
           <div
-            className="border-t border-slate-600 px-4 py-3 text-xs font-mono overflow-auto"
+            className="px-4 py-3 text-xs font-mono overflow-auto"
             style={{ backgroundColor: colors.lineNumBg, maxHeight: '8rem' }}
           >
             <div className="mb-2 text-[10px] uppercase tracking-wide" style={{ color: colors.errorHeader }}>
