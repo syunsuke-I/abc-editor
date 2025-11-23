@@ -56,8 +56,10 @@ export const parseBarLine = (line: string, index: number): ParseResult | null =>
   }
 
   if (ABC_BAR_PATTERN.test(barSymbol)) {
+    // 複縦線 (||) の場合は特別なクラスを使用
+    const barClass = barSymbol === '||' ? 'abc-bar-double' : 'abc-bar';
     return {
-      html: `<span class="abc-bar">${escapeHtml(barSymbol)}</span>`,
+      html: `<span class="${barClass}">${escapeHtml(barSymbol)}</span>`,
       nextIndex: j,
     };
   }

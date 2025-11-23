@@ -18,6 +18,7 @@
   --abc-duration-fraction: #ffe38f;
   --abc-broken: #7be495;
   --abc-bar: #79cfff;
+  --abc-bar-double: #4aafff;
   --abc-chord: #ff8ccf;
   --abc-slur-0: #ff92b2;
   --abc-slur-1: #ffd77a;
@@ -111,8 +112,13 @@
 }
 
 .abc-bar {
-  color: var(--abc-bar); /* スカイシアン - 小節線 (|, ||, |:, :|, ::) */
+  color: var(--abc-bar); /* スカイシアン - 小節線 (|, |:, :|, ::) */
   font-weight: 600;
+}
+
+.abc-bar-double {
+  color: var(--abc-bar-double); /* 濃いブルー - 複縦線 (||) 太字で強調 */
+  font-weight: 900;
 }
 
 .abc-chord {
