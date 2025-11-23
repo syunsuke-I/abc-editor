@@ -1,12 +1,16 @@
 import { useEffect, useRef } from "react";
 import abcjs from "abcjs";
 
-export const AbcPreview = ({ abc }: { abc: string }) => {
+interface AbcPreviewProps {
+  value: string;
+}
+
+export const AbcPreview = ({ value }: AbcPreviewProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (ref.current) {
-      abcjs.renderAbc(ref.current, abc, {
+      abcjs.renderAbc(ref.current, value, {
         responsive: "resize",
         foregroundColor: "#ffffff",
         format: {
@@ -14,7 +18,7 @@ export const AbcPreview = ({ abc }: { abc: string }) => {
         },
       });
     }
-  }, [abc]);
+  }, [value]);
 
   return <div ref={ref} className="w-full abc-preview" />;
 };

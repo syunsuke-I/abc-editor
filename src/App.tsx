@@ -11,12 +11,15 @@ F A D E  D A G E |`);
 
   return (
     <div className="h-screen flex flex-col-reverse md:flex-row bg-slate-950">
-      <AbcEditor value={abc} onChange={setAbc} />
+      {/* 左側: エディタ */}
+      <div className="w-full md:w-1/2 h-2/3 md:h-full">
+        <AbcEditor value={abc} onChange={setAbc} />
+      </div>
 
-      {/* 右側: プレビュー (モバイル: 上部1/3) */}
+      {/* 右側: プレビュー */}
       <div className="w-full md:w-1/2 h-1/3 md:h-full flex flex-col p-4" style={{ backgroundColor: '#161616' }}>
         <div className="w-full h-full rounded-lg border border-slate-600 overflow-auto p-4" style={{ backgroundColor: '#1a1a1a' }}>
-          <AbcPreview abc={abc} />
+          <AbcPreview value={abc} />
         </div>
       </div>
     </div>
