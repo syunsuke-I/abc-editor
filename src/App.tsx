@@ -10,11 +10,11 @@ K:C
 C D E F | G A B c |`);
 
   return (
-    <div className="h-screen flex bg-slate-950">
+    <div className="h-screen flex flex-col-reverse md:flex-row bg-slate-950">
       <AbcEditor value={abc} onChange={setAbc} />
 
-      {/* 右側: プレビュー */}
-      <div className="w-1/2 overflow-auto p-6" style={{ backgroundColor: '#161616' }}>
+      {/* 右側: プレビュー (モバイル: 上部1/3) */}
+      <div className="w-full md:w-1/2 h-1/3 md:h-full overflow-auto p-4 md:p-6" style={{ backgroundColor: '#161616' }}>
         <AbcPreview abc={abc} />
       </div>
     </div>
