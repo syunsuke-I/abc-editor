@@ -28,6 +28,7 @@ export const AbcEditor = ({ value, onChange, theme = 'light' }: AbcEditorProps) 
         bg: '#1a1a1a',
         editorBg: '#262626',
         lineNumBg: '#0f0f0f',
+        lineNumBorder: '#2d2d2d',
         caretColor: '#fff',
         placeholderColor: '#64748b',
         errorBg: '#1a1a1a',
@@ -46,6 +47,7 @@ export const AbcEditor = ({ value, onChange, theme = 'light' }: AbcEditorProps) 
         bg: '#f8f9fa',
         editorBg: '#ffffff',
         lineNumBg: '#ffffff',
+        lineNumBorder: '#e5e7eb',
         caretColor: '#000',
         placeholderColor: '#999999',
         errorBg: '#ffffff',
@@ -98,7 +100,11 @@ export const AbcEditor = ({ value, onChange, theme = 'light' }: AbcEditorProps) 
         <div
           ref={lineNumbersRef}
           className="overflow-hidden text-right text-sm font-mono leading-relaxed text-slate-500 select-none"
-          style={{ backgroundColor: colors.lineNumBg, minWidth: '2.5rem' }}
+          style={{
+            backgroundColor: colors.lineNumBg,
+            minWidth: '2.5rem',
+            borderRight: `1px solid ${colors.lineNumBorder}`
+          }}
         >
           <pre className="m-0 pl-1 pr-3 py-4">{lineNumbers}</pre>
         </div>
@@ -191,7 +197,9 @@ export const AbcEditor = ({ value, onChange, theme = 'light' }: AbcEditorProps) 
             style={{
               backgroundColor: colors.errorBg,
               borderColor: colors.errorBorder,
+              borderLeft: `1px solid ${colors.lineNumBorder}`,
               maxHeight: '12rem',
+              marginLeft: '2.5rem',
               scrollbarWidth: 'thin',
               scrollbarColor: `${colors.errorIcon} transparent`
             }}
