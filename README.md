@@ -11,23 +11,11 @@ A React component for editing ABC music notation with syntax highlighting, autoc
 ## Features
 
 - **Light & Dark Mode**: Built-in theme support with light mode as default
-
-<img width="948" height="296" alt="スクリーンショット 2025-11-23 16 29 10" src="https://github.com/user-attachments/assets/7db993ac-3750-40a1-a66c-a3f81c57778b" />
-
-
 - **Syntax Highlighting**: Color-coded ABC notation elements optimized for both themes
 - **Line Numbers**: Clear visual reference for navigation
-<img width="739" height="282" alt="スクリーンショット 2025-11-23 14 46 26" src="https://github.com/user-attachments/assets/e69f6bf6-3ea8-45d9-b194-3d5a6e4c5385" />
-
 - **Autocomplete**: Smart suggestions for ABC notation commands and fields
-
-<img width="295" height="353" alt="スクリーンショット 2025-11-23 14 47 31" src="https://github.com/user-attachments/assets/625ae548-47ec-4c84-a984-9d9cd19f95c7" />
-
-
 - **Real-time Validation**: Measure beat count validation with visual feedback
 - **Error Highlighting**: Hover over validation errors to highlight the problematic measure
-<img width="956" height="987" alt="スクリーンショット 2025-11-23 14 44 14" src="https://github.com/user-attachments/assets/50d7f3c4-5c7e-47df-8237-cdebb2ce086f" />
-
 
 ## Installation
 
