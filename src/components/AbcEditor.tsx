@@ -63,16 +63,25 @@ export const AbcEditor = ({ value, onChange, theme = 'light' }: AbcEditorProps) 
         errorItemBorder: 'rgba(220, 38, 38, 0.1)'
       };
 
-  // オートコンプリート機能
-  const {
-    isOpen,
-    suggestions,
-    selectedIndex,
-    position,
-    handleKeyDown,
-    selectSuggestion,
-    handleMouseEnter,
-  } = useAbcAutoComplete({ value, textareaRef, onChange });
+  // オートコンプリート機能（デバッグ用に完全無効化）
+  // const {
+  //   isOpen,
+  //   suggestions,
+  //   selectedIndex,
+  //   position,
+  //   handleKeyDown,
+  //   selectSuggestion,
+  //   handleMouseEnter,
+  // } = useAbcAutoComplete({ value, textareaRef, onChange });
+
+  // デバッグ用ダミー値
+  const isOpen = false;
+  const suggestions: never[] = [];
+  const selectedIndex = 0;
+  const position = { top: 0, left: 0 };
+  const handleKeyDown = undefined;
+  const selectSuggestion = () => {};
+  const handleMouseEnter = () => {};
 
   const handleScroll = () => {
     if (textareaRef.current && lineNumbersRef.current && highlightRef.current) {
@@ -114,7 +123,7 @@ export const AbcEditor = ({ value, onChange, theme = 'light' }: AbcEditorProps) 
           {/* シンタックスハイライト背景 */}
           <div
             ref={highlightRef}
-            className="absolute inset-0 overflow-hidden px-4 py-4 text-sm font-mono leading-relaxed pointer-events-none"
+            className="absolute inset-0 overflow-hidden pointer-events-none"
             style={{
               backgroundColor: colors.editorBg,
               opacity: hoveredError ? 0.3 : 1,
@@ -122,7 +131,8 @@ export const AbcEditor = ({ value, onChange, theme = 'light' }: AbcEditorProps) 
             }}
           >
             <pre
-              className="m-0"
+              className="m-0 px-4 py-4 text-sm font-mono leading-relaxed whitespace-pre-wrap break-words"
+              style={{ wordSpacing: 'normal', letterSpacing: 'normal' }}
               dangerouslySetInnerHTML={{ __html: highlightedCode }}
             />
           </div>
@@ -167,8 +177,8 @@ export const AbcEditor = ({ value, onChange, theme = 'light' }: AbcEditorProps) 
           {/* テキストエリア */}
           <textarea
             ref={textareaRef}
-            className="absolute inset-0 w-full h-full resize-none px-4 py-4 text-sm font-mono leading-relaxed outline-none border-0"
-            style={{ backgroundColor: 'transparent', color: 'transparent', caretColor: colors.caretColor }}
+            className="absolute inset-0 w-full h-full resize-none px-4 py-4 text-sm font-mono leading-relaxed outline-none border-0 whitespace-pre-wrap break-words"
+            style={{ backgroundColor: 'transparent', color: 'rgba(255, 0, 0, 0.5)', caretColor: colors.caretColor, wordSpacing: 'normal', letterSpacing: 'normal' }}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             onScroll={handleScroll}
